@@ -16,8 +16,8 @@ Ao longo deste notebook, você aprenderá a:
 A execução deste notebook será feita através do Codespace do GitHub. Para isso, é necessário realizar as seguintes etapas:
 - **Fork do repositório base**: Faça um fork do repositório base para criar uma cópia do projeto em sua conta do GitHub.
 - **Inicialização do Codespace**: Acesse o repositório forkado e clique em "Codespaces" no botão "Code" do GitHub, em seguida, clique em "New codespace" para inicializar o ambiente de desenvolvimento. O Codespace é um ambiente de desenvolvimento hospedado na nuvem que permite que você desenvolva e execute seu código diretamente no navegador, sem a necessidade de configurar um ambiente local. Com o Codespace, você pode criar, editar e executar seu código em um ambiente isolado e seguro.
-- **Build da imagem Docker:** No Codespace, localize o terminal na parte inferior da janela e copie e cole o comando docker build -t imagem-docker . nele. Em seguida, pressione Enter para executar o comando. O terminal irá exibir as etapas de construção da imagem Docker, incluindo a instalação de dependências e a compilação do código. Se o comando for executado com sucesso, você verá uma mensagem indicando que a imagem foi construída com sucesso, como por exemplo: "Successfully built <id_da_imagem>". Isso significa que a imagem Docker foi criada e está pronta para ser usada.
-- **Execução do notebook:** No Codespace, localize o arquivo `./notebooks/começar_por_aqui.ipynb` e clique nele para abrir. Em seguida, clique no botão "Run" para executar o notebook. O notebook irá executar as células e exibir o resultado com a precisão do modelo. Não se preocupe. Este código é só um teste para garantir que o Python está executando corretamente no "Codespaces".
+- **Build da imagem Docker:** No Codespace, localize o terminal na parte inferior da janela e copie e cole o comando `docker build -t imagem-docker .` nele. Em seguida, pressione Enter para executar o comando. O terminal irá exibir as etapas de construção da imagem Docker, incluindo a instalação de dependências e a compilação do código. Se o comando for executado com sucesso, você verá uma mensagem indicando que a imagem foi construída com sucesso, como por exemplo: "=> naming to docker.io/library/imagem-docker". Isso significa que a imagem Docker foi criada e está pronta para ser usada.
+- **Execução do notebook:** No Codespace, localize o arquivo `começar_por_aqui.ipynb` e clique nele para abrir. Em seguida, clique no botão "Run" para executar o notebook. O notebook irá executar as células e exibir os resultados. Durante a execução do notebook, o Codespace pode solicitar a instalação de extensões e a definição do ambiente que será utilizado. Nesse caso, vamos usar o Python 3.10 já existente por padrão no Codespace. Se necessário, o Codespace pode solicitar a instalação de dependências adicionais para executar o notebook.
 
 Esses passos são necessários para garantir que o mínimo do ambiente está funcional para os exercícios em sala. Se você tiver alguma dúvida ou precisar de ajuda, por favor, entre em contato comigo.
 
@@ -49,6 +49,7 @@ Neste exercício, você irá explorar a estrutura da árvore de decisão e enten
 2. Calcular a medida de impureza para diferentes conjuntos de dados e entender como ela impacta o desempenho do modelo.
 3. Analisar como a medida de impureza afeta a escolha dos atributos para dividir os dados em cada nó da árvore.
 4. Entender como a medida de impureza pode ser utilizada para evitar overfitting e melhorar a generalização do modelo.
+
 
 #### Exercício 4 - Preparação do container para deploy do modelo
 Neste exercício, você irá aprender a preparar um container Docker para deploy do modelo de árvore de decisão treinado. Isso envolve criar um ambiente isolado e portável que possa ser facilmente implantado em diferentes contextos.
@@ -100,5 +101,4 @@ Alguns exemplos:
 ![image](https://github.com/user-attachments/assets/01868a0f-7cf8-464b-b299-901b78fdba63)
 
 ![image](https://github.com/user-attachments/assets/95d84022-bff5-43c6-a07a-3e1da52df06e)
-
 

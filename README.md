@@ -96,9 +96,3 @@ Para este exercício vamos utilizar o dataset bastante conhecido, chamado MNIST.
 
 Este dataset é built-in no pacote Sklearn. Neste link vocês podem verificar outros datasets built-in: https://scikit-learn.org/stable/datasets/toy_dataset.html.
 
-Alguns exemplos:
-
-![image](https://github.com/user-attachments/assets/01868a0f-7cf8-464b-b299-901b78fdba63)
-
-![image](https://github.com/user-attachments/assets/95d84022-bff5-43c6-a07a-3e1da52df06e)
-

@@ -3,3 +3,4 @@ uvicorn
 scikit-learn
 xgboost
 matplotlib
+flask

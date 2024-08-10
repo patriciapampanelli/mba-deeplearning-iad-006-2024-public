@@ -1,9 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Union
+from numpy import ndarray
 from pydantic import BaseModel
 from enum import Enum
 import os
+from PIL import Image
+import io
+import base64
 
 app = FastAPI(
     title="API do exercício de IAD-014: ML2 - Árvores de Decisão",
@@ -25,9 +29,23 @@ class ModelName(str, Enum):
     resnet = "resnet"
     lenet = "lenet"
 
+#classe para importacao da imagem
+class ImageData(BaseModel):
+    filename: str
+    content: str  # Base64 encoded image content
+
 @app.get("/")
 def hello_world():
     return {"message": "Olá, esta é a API do exercício de IAD-014: ML2 - Árvores de Decisão!"}
+
+@app.post("/predict/")
+def predict_image(image: ImageData):
+    # Decode the base64 image content
+    image_content = base64.b64decode(image.content)
+    
+    # Process the image
+    image = Image.open(io.BytesIO(image_content))
+    return {"image": image}
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):

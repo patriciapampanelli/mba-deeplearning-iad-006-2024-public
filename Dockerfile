@@ -16,5 +16,7 @@ COPY . /app/
 # Expose the port
 EXPOSE 8000
 
+ENV FLASK_APP=main.py
+
 # Run the command to start the development server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]

@@ -1,22 +1,12 @@
-from flask import Flask, jsonify, request
+from fastapi import FastAPI
 
-app = Flask(__name__)
+app = FastAPI()
 
-# Sample endpoint
-@app.route('/hello', methods=['GET'])
+@app.get('/')
 def hello_world():
-    return jsonify({'message': 'Hello, World!'})
+    return {'message': 'Hello, World!'}
 
-# Example endpoint with parameters
-@app.route('/greet', methods=['GET'])
-def greet():
-    name = request.args.get('name', 'Guest')
-    return jsonify({'message': f'Hello, {name}!'})
-
-# Run the app
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=8000)
 
-#comentario 2105
-#comentario 2128
-#comentatio 2124

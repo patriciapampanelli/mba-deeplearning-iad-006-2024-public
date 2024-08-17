@@ -1,14 +1,12 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Union
-from numpy import ndarray
+import uvicorn
+import numpy as np
+import matplotlib.pyplot as plt
+from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
-from enum import Enum
-import os
-from PIL import Image
-import io
-import base64
+from typing import List
 
+# Cria uma instância do FastAPI
 app = FastAPI(
     title="API do exercício de IAD-014: ML2 - Árvores de Decisão",
     description="Esta é uma API usando FastAPI e Swagger UI que recebe uma imagem de entrada e faz a previsão do número baseado em um modelo de árvore de decisão.",
@@ -19,60 +17,43 @@ app = FastAPI(
     },
 )
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
-
-class ModelName(str, Enum):
-    alexnet = "alexnet"
-    resnet = "resnet"
-    lenet = "lenet"
-
-#classe para importacao da imagem
+# Define o modelo de dados (lista de inteiros) que será recebido no corpo da requisição POST
 class ImageData(BaseModel):
-    filename: str
-    content: str  # Base64 encoded image content
+    image: List[List[int]]
 
-@app.get("/")
-def hello_world():
-    return {"message": "Olá, esta é a API do exercício de IAD-014: ML2 - Árvores de Decisão!"}
-
+#Implementa a rota POST no caminho "/predict/" que aceita dados no formato definido por ImageData.
 @app.post("/predict/")
-def predict_image(image: ImageData):
-    # Decode the base64 image content
-    image_content = base64.b64decode(image.content)
+async def predict(data: ImageData):
+    # Converte a lista recebida de volta para um array numpy com tipo uint8 
+    image = np.array(data.image, dtype=np.uint8)
     
-    # Process the image
-    image = Image.open(io.BytesIO(image_content))
-    return {"image": image}
+    # Redimensiona a imagem para uma matriz 8x8.
+    image_data = image.reshape(8, 8)
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+    # Retorna a imagem como uma lista de listas em um JSON.
+    return JSONResponse(content=image_data.tolist())
 
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
+#Implementa a rota raiz que exibe mensagem de utilizacao da API
+@app.get("/")
+#def hello():
+#    return {"message": "Olá, esta é a API do exercício de IAD-014: ML2 - Árvores de Decisão! \
+#                        Para utilizar, envie na rota /predict/ um lista com 64 inteiros (0 a 16) \
+#                        que representam os pixels de uma imagem 8x8 "}
 
-@app.get("/models/{model_name}")
-async def get_model(model_name: ModelName):
-    if model_name is ModelName.alexnet:
-        return {"model_name": model_name, "message": "Deep Learning FTW!"}
+def hello():
+    html_content = """
+    <html>
+        <head>
+            <title>Bem-vindo à API de Árvores de Decisão</title>
+        </head>
+        <body>
+            <h1>Olá, esta é a API do exercício de IAD-014: ML2 - Árvores de Decisão!</h1>
+            <p>Para utilizar, envie na rota <strong>/predict/</strong> uma lista com 64 inteiros (0 a 16) que representam os pixels de uma imagem 8x8.</p>
+        </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
 
-    if model_name.value == "lenet":
-        return {"model_name": model_name, "message": "LeCNN all the images"}
-
-    return {"model_name": model_name, "message": "Have some residuals"}
-
-@app.get("/file/{file_path:path}")
-async def read_file(file_path: str):
-    if os.path.isfile(file_path):
-        return {"file_path": f"{file_path} encontrado com sucesso"}
-    else:
-        return {"file_path": f"{file_path} não encontrado"}
-
+# Se o arquivo for executado diretamente, inicia o servidor uvicorn no endereço 0.0.0.0 e porta 8000.
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

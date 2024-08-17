@@ -3,3 +3,5 @@ uvicorn
 scikit-learn
 xgboost
 matplotlib
+typing
+pydantic

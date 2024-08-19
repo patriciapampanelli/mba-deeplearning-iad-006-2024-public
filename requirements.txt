@@ -1,5 +1,8 @@
 fastapi
 uvicorn
+python-multipart
 scikit-learn
 xgboost
 matplotlib
+graphviz
+requests

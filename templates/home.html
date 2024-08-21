@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <title>Desenhe um digito</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <!--Navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <a class="navbar-brand" href="/">
+        <img id="logo" src="/static/images/logo.jpg" style="max-width: 80px;">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link nav-link-top-menu delivery-button" style="color: white; cursor: pointer;">Teste os modelos</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <section style="margin-bottom: 20px;">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <h4>Escolha o modelo, desenhe um digito na tela ou escolha uma foto</h4>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <select name="model" id="model">
+              <option value="" selected disabled hidden>Escolha o modelo de previsão</option>
+              <option value="decision_tree">Árvore de Decisão</option>
+              <option value="random_forest">Random Forest</option>
+              <option value="xgboost">XGBoost</option>
+            </select>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <div>
+              <canvas id="drawing-canvas" style="border:1px solid black;">
+              </canvas>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <input type="file" id="choosenImage" alt="Escolha um arquivo de imagem"/>
+            <input type="file" id="falseinput" alt="Escolha um arquivo de imagem" style="display: none;"/>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <button id="erase" type="button" class="btn btn-secondary">Apagar</button>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-sm-12 col-md-6">
+            <button id="export" type="button" class="btn btn-primary">Que digito é esse?</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+  <script
+    src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="/static/js/jquery.sketchable.full.min.js"></script>
+  <script>
+    $(function() {
+      const initCanvas = () => {
+        let screenHeight = $(window).height();
+        let screenWidth = $(window).width();
+        let canvasSize = (screenHeight > screenWidth ? screenWidth : screenHeight) - 100;
+        let canvas = $('#drawing-canvas')[0];
+        let context = canvas.getContext("2d");
+        canvas.width = canvasSize;
+        canvas.height = canvasSize;
+        context.canvas.width = canvasSize;
+        context.canvas.height = canvasSize;
+        return $('#drawing-canvas').sketchable();
+      };
+
+      const uploadImage = (image, model) => {
+        $.ajax({
+          url: "/predict",
+          type:"post",
+          contentType: "application/json",
+          headers: {                                  
+            'Accept': 'application/json',
+            'Content-Type': 'application/json' 
+          },
+          data: JSON.stringify({ image: image, model: model }),
+          dataType: 'json',
+          success: function(response){
+            alert(`O digito reconhecido é o ${response.digit}, e foi inferido com probabilidade ${response.probability}`);
+          },
+          error:function(xhr, ajaxOptions, thrownError){
+            alert('Deu Ruim');
+          }
+        });
+      };
+
+      $('button#export').click((evt) => {
+        evt.preventDefault();
+        let imageCanvas = $('#drawing-canvas').get(0);
+        let image = imageCanvas.toDataURL();
+        let model = $('#model').find(":selected").val();
+        uploadImage(image, model);
+      });
+
+      $("#choosenImage").change((evt) => {
+        evt.preventDefault();
+        let file = evt.currentTarget.files[0];
+        let model = $('#model').find(":selected").val();
+        let image = null;
+
+        if (file) {
+			  	var reader = new FileReader();
+			  	reader.onloadend = () => {
+			  		$('#falseinput').attr('href', reader.result);
+            $('#falseinput').text(reader.result);
+            image = reader.result;
+            uploadImage(image, model);
+			  	};
+			  	reader.readAsDataURL(file);
+			  }
+      });
+
+      $('button#erase').click((evt) => {
+        evt.preventDefault();
+        sketcher.sketchable('clear');
+      });
+
+      let sketcher = initCanvas();
+    });
+  </script>
+</html>

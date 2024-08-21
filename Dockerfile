@@ -8,7 +8,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the dependencies
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install asgiref
+RUN pip install uvicorn
 
 # Copy the application code
 COPY . /app/
@@ -17,4 +20,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Run the command to start the development server
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:wsgi", "--host", "0.0.0.0", "--port", "8000"]

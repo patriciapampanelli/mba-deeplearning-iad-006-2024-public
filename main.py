@@ -33,7 +33,7 @@ async def startup_event():
 
 #Definição do endpoint /predict que aceita as requisições via POST
 #Esse endpoint que irá receber a imagem base64 e irá convertê-la apra fazer a inferência
-@app.post("/predict", response_model=PredicitionResponse)
+@app.post("/predict", response_model=PredictionResponse)
 async def predict(request: ImageRequest):
   img_bytes = base64.b64decode(request.image)
   img = Image.open(io.BytesIO(img_bytes))

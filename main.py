@@ -17,13 +17,13 @@ app = FastAPI()
 class PredictionResponse(BaseModel):
   prediction: float
 
-class Imagerequest(BaseModel):
+class ImageRequest(BaseModel):
   image: str
 
 #Carregamento do Modelo de Machine Learning
 def load_model():
   global xgb_model_carregado
-  with open("xgboost_model.pkl", "rb") as f:
+  with open("/app/notebooks/xgboost_model.pkl", "rb") as f:
     xgb_model_carregado = pickle.load(f)
 
 #Inicialização da Aplicação
@@ -54,4 +54,3 @@ async def predict(request: ImageRequest):
 async def healthcheck():
   #retorna um objeto com um campo status com valor "ok" se a aplicação estiver funcionando corretamente
   return {"status": "ok"}
-  

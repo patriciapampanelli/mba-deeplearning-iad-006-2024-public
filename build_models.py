@@ -20,7 +20,7 @@ def supress_exceptions(f):
 
 def single_decision_tree(X_train, X_test, y_train, y_test, persist=False, print_all_metrics=False):
     clf = DecisionTreeClassifier(random_state=42)
-    gscv = GridSearchCV(clf, param_grid={ 'criterion': ['gini', 'entropy', 'log_loss'] })
+    gscv = GridSearchCV(clf, param_grid={ 'criterion': ['gini'] })
     start_time = time.time()
     gscv.fit(X_train, y_train)
     end_time = time.time()
@@ -48,7 +48,7 @@ def random_forest(X_train, X_test, y_train, y_test, persist=False, print_all_met
 
 def xgboost_model(X_train, X_test, y_train, y_test, persist=False, print_all_metrics=False):
     clf = xgb.XGBClassifier(num_class=10)
-    gscv = GridSearchCV(clf, param_grid={ 'max_depth': [10, 100, 1000] })
+    gscv = GridSearchCV(clf, param_grid={ 'max_depth': [5] })
     start_time = time.time()
     gscv.fit(X_train, y_train)
     end_time = time.time()
@@ -60,7 +60,6 @@ def xgboost_model(X_train, X_test, y_train, y_test, persist=False, print_all_met
             pk.dump(gscv, pickle_file)
     return gscv
 
-@supress_exceptions
 def print_metrics(model, X_test, y_test, show_tree=False):
     y_pred = model.predict(X_test)
     score = model.score(X_test, y_test)
@@ -70,7 +69,8 @@ def print_metrics(model, X_test, y_test, show_tree=False):
     disp.plot()
     plt.show()
     if show_tree:
-        plot_tree(model, filled=True)
+        plt.figure(figsize=(20,10), dpi=800.0)
+        plot_tree(model.best_estimator_, filled=True, class_names=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
         plt.title("Decision tree trained on all the MNIST features")
         plt.show()
 
@@ -88,6 +88,6 @@ X = digits.data
 y = digits.target
 scaler, standardized_dataset = get_normalizer(X, persist=True)
 X_train, X_test, y_train, y_test = train_test_split(standardized_dataset, y, test_size=0.2, random_state=42)
-single_decision_tree(X_train, X_test, y_train, y_test, persist=True, print_all_metrics=True)
-random_forest(X_train, X_test, y_train, y_test, persist=True, print_all_metrics=True)
+#single_decision_tree(X_train, X_test, y_train, y_test, persist=True, print_all_metrics=True)
+#random_forest(X_train, X_test, y_train, y_test, persist=True, print_all_metrics=True)
 xgboost_model(X_train, X_test, y_train, y_test, persist=True, print_all_metrics=True)

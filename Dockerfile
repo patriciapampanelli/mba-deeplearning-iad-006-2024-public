@@ -1,6 +1,9 @@
 # Use an official Python image as the base
 FROM python:3.9-slim
 
+ENV DEBUG_INFERENCE=true
+ENV DEBUG_DIGIT_IMAGES=false
+
 # Set the working directory to /app
 WORKDIR /app
 

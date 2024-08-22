@@ -37,7 +37,7 @@ async def startup_event():
 async def predict(request: ImageRequest):
   img_bytes = base64.b64decode(request.image)
   img = Image.open(io.BytesIO(img_bytes))
-  img = img.resize((8,8))
+  #img = img.resize((8,8))
   img_array = np.array(img)
 
   #Converter a imagem para escala de cinza

@@ -68,7 +68,6 @@ async def predict(data: ImageData):
         "data": image.tolist(),
         "predict": y_pred.tolist(),
         "description": "Resultado da previsao.",
-        "details": f"Profundidade {clf.tree_.max_depth}"
     }
     return JSONResponse(content=data)
 

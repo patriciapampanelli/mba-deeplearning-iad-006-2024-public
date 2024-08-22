@@ -23,7 +23,7 @@ class ImageRequest(BaseModel):
 #Carregamento do Modelo de Machine Learning
 def load_model():
   global xgb_model_carregado
-  with open("/app/notebooks/xgboost_model.pkl", "rb") as f:
+  with open("/app/notebooks/rf_model.pkl", "rb") as f:
     xgb_model_carregado = pickle.load(f)
 
 #Inicialização da Aplicação

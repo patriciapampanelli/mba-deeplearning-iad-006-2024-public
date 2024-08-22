@@ -6,6 +6,9 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
 from typing import List
 import pickle as pkl
+import warnings
+
+warnings.simplefilter(action='ignore', category=DeprecationWarning)	
 
 # Cria uma instância do FastAPI
 app = FastAPI(
@@ -38,34 +41,45 @@ def hello():
     """
     return HTMLResponse(content=html_content)
 
+# Inicialização da Aplicação	
+@app.on_event("startup")	
+async def startup_event():	
+    load_model()	
+
+def load_model():
+    global clf
+    try:
+        file_path = './models/modelo.pkl'  
+        with open(file_path, 'rb') as f:
+            # Pickle the clf model using the highest protocol available.
+            clf = pkl.load(f)
+    except FileNotFoundError:
+        print(f"Erro interno: Não foi possível carregar o modelo em {file_path}")
+
 #Implementa a rota POST no caminho "/predict/" que aceita dados no formato definido por ImageData.
 @app.post("/predict/")
 async def predict(data: ImageData):
     # Converte a lista recebida de volta para um array numpy com tipo uint8 
     image = np.array(data.image, dtype=np.uint8)
+    y_pred = clf.predict(image)
 
-    #importa o modelo de arvore de decisao para a predicao
-    try:
-        file_path = './models/modelo.pkl'  
-        with open(file_path, 'rb') as f:
-            # Pickle the clf model using the highest protocol available.
-            clf  = pkl.load(f)
-    except FileNotFoundError:
-        data = {
-            "message": f"Erro interno: Não foi possível carregar o modelo em {file_path}"
-        }
-        return JSONResponse(content=data, status_code=500)
-    finally:
-        y_pred = clf.predict(image)
+    #retorna o resultado da predicao e dados do modelo
+    data = {
+        "data": image.tolist(),
+        "predict": y_pred.tolist(),
+        "description": "Resultado da previsao.",
+        "details": f"Profundidade {clf.tree_.max_depth}"
+    }
+    return JSONResponse(content=data)
 
-        #retorna o resultado da predicao e dados do modelo
-        data = {
-            "data": image.tolist(),
-            "predict": y_pred.tolist(),
-            "description": "Resultado da previsao.",
-            "details": f"Profundidade {clf.tree_.max_depth}"
-        }
-        return JSONResponse(content=data)
+#Implementa a rota "/healthcheck/" que retorna "ok" para sinalizar que o servidor está oline.
+@app.get("/healthcheck")
+async def healthcheck():
+    #retorna ok
+    data = {
+        "status": "ok",
+    }
+    return JSONResponse(content=data)
 
 # Se o arquivo for executado diretamente, inicia o servidor uvicorn no endereço 0.0.0.0 e porta 8000.
 if __name__ == "__main__":

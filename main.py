@@ -41,7 +41,7 @@ async def predict(request: ImageRequest):
   img_array = np.array(img)
 
   #Converter a imagem para escala de cinza
-  img_array=np.dot(img_array[...,:3], [0.2989, 0.58870, 0.1140])
+  img_array=np.dot(img_array[...,:3], [0.2989, 0.5870, 0.1140])
 
   img_array = img_array.reshape(1,-1)
 

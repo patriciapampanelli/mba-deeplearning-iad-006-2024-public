@@ -5,3 +5,4 @@ xgboost
 matplotlib
 typing
 pydantic
+graphviz

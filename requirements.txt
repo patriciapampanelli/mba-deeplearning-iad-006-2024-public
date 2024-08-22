@@ -3,4 +3,6 @@ uvicorn
 scikit-learn
 xgboost
 matplotlib
-flask
+typing
+pydantic
+graphviz
